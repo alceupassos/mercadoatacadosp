@@ -1,6 +1,6 @@
 import Medusa from "@medusajs/medusa-js";
 
-const MEDUSA_BACKEND_URL = "http://62.171.181.241:9000";
+const MEDUSA_BACKEND_URL = "https://apimercadoatacadosp.angra.io";
 const PUBLISHABLE_KEY =
   "pk_dc1824662c3758e57a738ee1954bb10461702e002e0bb723a41075b6c494a6cc";
 
