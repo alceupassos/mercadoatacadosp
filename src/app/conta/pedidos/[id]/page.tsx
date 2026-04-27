@@ -1,19 +1,13 @@
 import Link from "next/link";
-import {
-  ChevronLeft,
-  Truck,
-  CheckCircle,
-  Clock,
-  MapPin,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const orderDetails = {
   id: "BRAS-A1B2C3",
   date: "15 de Abril de 2026",
   status: "Entregue",
-  paymentMethod: "Cartao de Credito (12x)",
-  shippingAddress: "Rua do Bras, 1234 - Bras, SP, 01101-000",
+  statusStyle: "gold",
+  paymentMethod: "Cartao de Credito (12x de R$ 124,16)",
+  shippingAddress: "Rua do Bras, 1234 — Bras, Sao Paulo, SP 01101-000",
   tracking: "BR123456789SP",
   timeline: [
     { status: "Pedido Realizado", date: "01 Abr, 14:30", done: true },
@@ -23,9 +17,27 @@ const orderDetails = {
     { status: "Entregue", date: "08 Abr, 11:20", done: true },
   ],
   items: [
-    { name: "Camiseta Oversized Algodao", size: "M", color: "Preto", qty: 12, price: 3990 },
-    { name: "Blusa Tricot Premium", size: "G", color: "Bege", qty: 8, price: 5990 },
-    { name: "Calca Jeans Destroyed", size: "42", color: "Azul", qty: 4, price: 8990 },
+    {
+      name: "Camiseta Oversized Algodao",
+      size: "M",
+      color: "Preto",
+      qty: 12,
+      price: 3990,
+    },
+    {
+      name: "Blusa Tricot Premium",
+      size: "G",
+      color: "Bege",
+      qty: 8,
+      price: 5990,
+    },
+    {
+      name: "Calca Jeans Destroyed",
+      size: "42",
+      color: "Azul",
+      qty: 4,
+      price: 8990,
+    },
   ],
 };
 
@@ -38,81 +50,144 @@ export default async function OrderDetailPage({
   const order = orderDetails;
 
   const subtotal = order.items.reduce((sum, i) => sum + i.price * i.qty, 0);
-  const shipping = 2990;
+  const shipping = subtotal > 50000 ? 0 : 2990;
   const total = subtotal + shipping;
 
+  const formatPrice = (amount: number) =>
+    (amount / 100).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+
   return (
-    <div className="bg-[#f5f5f0] min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-[#f5f3ee]">
+      <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Back */}
         <Link
           href="/conta"
-          className="text-sm text-[var(--primary)] hover:underline flex items-center gap-1 mb-6"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[#6b5b8a] hover:text-[#4a3d5c] transition-colors mb-6"
         >
-          <ChevronLeft className="w-4 h-4" /> Voltar para Meus Pedidos
+          &larr; Voltar para Meus Pedidos
         </Link>
 
-        {/* Header */}
-        <div className="bg-[#2d2a24] text-white rounded-2xl p-6 mb-6">
-          <div className="flex flex-col sm:flex-row justify-between gap-4">
+        {/* Header card */}
+        <div className="relative overflow-hidden bg-[#2d2a24] text-white rounded-2xl p-6 lg:p-8 mb-8">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-[#f3b94d]/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-1/4 w-48 h-48 bg-[#af9cc5]/5 rounded-full blur-3xl" />
+
+          <div className="relative flex flex-col sm:flex-row justify-between gap-4">
             <div>
-              <p className="text-xs text-amber-400 font-medium mb-1">
-                Pedido {id}
+              <p className="text-xs font-medium text-[#af9cc5] uppercase tracking-wider mb-1">
+                Pedido #{id}
               </p>
-              <h1 className="text-2xl font-bold">{id}</h1>
-              <p className="text-sm text-gray-400 mt-1">{order.date}</p>
+              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight">
+                {id}
+              </h1>
+              <p className="text-sm text-white/40 mt-1 font-light">
+                {order.date}
+              </p>
             </div>
-            <div className="flex items-start gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400">
+            <div className="flex flex-col items-start sm:items-end gap-2">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#fef3d5] text-[#8b6914]">
                 {order.status}
               </span>
+              <p className="text-xs text-white/30">
+                {order.paymentMethod}
+              </p>
             </div>
           </div>
 
           {/* Timeline */}
-          <div className="mt-8">
+          <div className="relative mt-8 lg:mt-10">
             <div className="flex items-start justify-between">
               {order.timeline.map((step) => (
-                <div key={step.status} className="flex-1 flex flex-col items-center">
+                <div
+                  key={step.status}
+                  className="flex-1 flex flex-col items-center relative"
+                >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm border-2 z-10 transition-all ${
                       step.done
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-600 text-gray-400"
+                        ? "bg-[#f3b94d] border-[#f3b94d] text-[#2d2a24]"
+                        : "bg-transparent border-white/20 text-white/40"
                     }`}
                   >
-                    {step.done ? <CheckCircle className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
+                    {step.done ? (
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    ) : (
+                      <span className="w-2 h-2 rounded-full bg-current" />
+                    )}
                   </div>
-                  <p className="text-xs mt-2 text-center hidden sm:block">{step.status}</p>
-                  <p className="text-[10px] text-gray-500 mt-0.5">{step.date}</p>
+                  <p className="text-[10px] mt-2 text-center text-white/50 hidden sm:block leading-tight max-w-[80px]">
+                    {step.status}
+                  </p>
+                  <p className="text-[9px] text-white/30 mt-0.5 font-light">
+                    {step.date}
+                  </p>
                 </div>
               ))}
             </div>
-            {/* Line */}
-            <div className="relative h-1 bg-gray-700 rounded-full -mt-12 mb-8 mx-8 -z-10">
-              <div className="absolute inset-0 bg-green-500 rounded-full" style={{ width: "100%" }} />
+            {/* Progress line */}
+            <div className="absolute top-5 left-4 right-4 h-0.5 bg-white/10 -z-0">
+              <div
+                className="h-full bg-[#f3b94d] rounded-full transition-all duration-1000"
+                style={{ width: "100%" }}
+              />
             </div>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-6">
           {/* Items */}
-          <div className="md:col-span-2 space-y-6">
-            <div className="bg-white rounded-xl border border-[var(--muted)] p-6">
-              <h2 className="text-lg font-bold mb-4">Itens do Pedido</h2>
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-2xl border border-[#e8e2d8] p-6">
+              <h2 className="text-lg font-bold text-[#2d2a24] mb-1">
+                Itens do Pedido
+              </h2>
+              <p className="text-xs text-[#8b7b6b] mb-5">
+                {order.items.reduce((s, i) => s + i.qty, 0)} pecas no total
+              </p>
+
               <div className="space-y-4">
                 {order.items.map((item, i) => (
-                  <div key={i} className="flex gap-4 pb-4 border-b border-[var(--muted)] last:border-0 last:pb-0">
-                    <div className="w-16 h-20 rounded-lg bg-[var(--muted)] shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{item.name}</p>
-                      <p className="text-xs text-[var(--muted-foreground)]">
-                        Tam: {item.size} &middot; Cor: {item.color} &middot; Qtd: {item.qty}
+                  <div
+                    key={i}
+                    className="flex gap-4 pb-4 border-b border-[#e8e2d8] last:border-0 last:pb-0"
+                  >
+                    {/* Thumb */}
+                    <div className="w-16 h-20 rounded-xl bg-gradient-to-br from-[#f5f3ee] to-[#e8e2d8] shrink-0 flex items-center justify-center">
+                      <span className="text-2xl select-none">
+                        {["🧥", "👚", "👖"][i]}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#2d2a24]">
+                        {item.name}
                       </p>
-                      <p className="text-sm font-bold mt-1">
-                        {(item.price / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                        {" "}cada
+                      <p className="text-xs text-[#8b7b6b] mt-0.5">
+                        Tam: {item.size} &middot; Cor: {item.color} &middot; Qtd:{" "}
+                        {item.qty}
                       </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-sm font-bold text-[#2d2a24]">
+                          {formatPrice(item.price)} cada
+                        </p>
+                        <span className="text-[10px] text-[#8b7b6b]">
+                          &middot; Total {formatPrice(item.price * item.qty)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -120,17 +195,26 @@ export default async function OrderDetailPage({
             </div>
 
             {/* Shipping info */}
-            <div className="bg-white rounded-xl border border-[var(--muted)] p-6">
-              <h2 className="text-lg font-bold mb-4">Informacoes de Envio</h2>
+            <div className="bg-white rounded-2xl border border-[#e8e2d8] p-6">
+              <h2 className="text-lg font-bold text-[#2d2a24] mb-4">
+                Informacoes de Envio
+              </h2>
               <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-2">
-                  <Truck className="w-4 h-4 text-[var(--primary)]" />
-                  <span className="text-[var(--muted-foreground)]">Rastreio:</span>
-                  <span className="font-mono font-medium">{order.tracking}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-semibold uppercase text-[#8b7b6b] w-16 shrink-0">
+                    Rastreio
+                  </span>
+                  <span className="font-mono font-medium text-[#2d2a24] text-sm">
+                    {order.tracking}
+                  </span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-[var(--primary)] mt-0.5" />
-                  <span className="text-[var(--muted-foreground)]">{order.shippingAddress}</span>
+                <div className="flex items-start gap-3">
+                  <span className="text-[10px] font-semibold uppercase text-[#8b7b6b] w-16 shrink-0 mt-0.5">
+                    Endereco
+                  </span>
+                  <span className="text-[#4a3d2c] text-sm">
+                    {order.shippingAddress}
+                  </span>
                 </div>
               </div>
             </div>
@@ -138,28 +222,52 @@ export default async function OrderDetailPage({
 
           {/* Summary sidebar */}
           <div>
-            <div className="bg-white rounded-xl border border-[var(--muted)] p-6 space-y-3 sticky top-24">
-              <h3 className="font-bold">Resumo</h3>
+            <div className="bg-white rounded-2xl border border-[#e8e2d8] p-6 space-y-3 lg:sticky lg:top-28">
+              <h3 className="font-bold text-[#2d2a24]">Resumo do Pedido</h3>
+
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-[var(--muted-foreground)]">Subtotal</span>
-                  <span>{(subtotal / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                  <span className="text-[#8b7b6b]">Subtotal</span>
+                  <span className="font-medium text-[#2d2a24]">
+                    {formatPrice(subtotal)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[var(--muted-foreground)]">Frete</span>
-                  <span>{(shipping / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                  <span className="text-[#8b7b6b]">Frete</span>
+                  <span className="font-medium text-[#2d2a24]">
+                    {shipping === 0 ? "Gratis" : formatPrice(shipping)}
+                  </span>
                 </div>
+                {shipping > 0 && (
+                  <p className="text-[10px] text-[#8b7b6b] text-right">
+                    Frete gratis acima de R$ 500
+                  </p>
+                )}
               </div>
-              <div className="border-t border-[var(--muted)] pt-3 flex justify-between font-bold">
+
+              <div className="border-t border-[#e8e2d8] pt-3 flex justify-between font-bold text-lg text-[#2d2a24]">
                 <span>Total</span>
-                <span>{(total / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                <span>{formatPrice(total)}</span>
               </div>
-              <p className="text-xs text-[var(--muted-foreground)]">
-                {order.paymentMethod}
-              </p>
-              <Button variant="outline" size="sm" className="w-full mt-2">
-                Solicitar Nota Fiscal
-              </Button>
+
+              <p className="text-xs text-[#8b7b6b]">{order.paymentMethod}</p>
+
+              <div className="space-y-2 pt-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full border-[#d5cdbd] text-[#4a3d2c] hover:bg-[#f5f3ee]"
+                >
+                  Solicitar Nota Fiscal
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full border-[#d5cdbd] text-[#4a3d2c] hover:bg-[#f5f3ee]"
+                >
+                  Reportar Problema
+                </Button>
+              </div>
             </div>
           </div>
         </div>
