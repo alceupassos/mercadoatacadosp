@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ProductCard } from "@/components/product/product-card";
 import { useProducts } from "@/hooks/use-products";
 import { Loader2 } from "lucide-react";
@@ -8,15 +9,23 @@ export function FeaturedProducts() {
   const { data: products, isLoading } = useProducts({ limit: 8 });
 
   return (
-    <section className="py-16 bg-[var(--background)]">
+    <section className="py-16 lg:py-20 bg-[#f5f3ee]">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl lg:text-3xl font-bold text-[var(--foreground)]">
-            Produtos em Destaque
-          </h2>
-          <p className="text-[var(--muted-foreground)] mt-2">
-            Novidades direto do Bras para sua loja
-          </p>
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <h2 className="text-2xl lg:text-3xl font-bold text-[#2d2a24] tracking-tight">
+              Produtos em Destaque
+            </h2>
+            <p className="text-[#8b7b6b] mt-2 text-sm">
+              Novidades direto do Bras para sua loja
+            </p>
+          </div>
+          <Link
+            href="/produtos"
+            className="hidden sm:inline text-sm font-medium text-[#6b5b8a] hover:text-[#4a3d5c] transition-colors"
+          >
+            Ver todos &rarr;
+          </Link>
         </div>
 
         {isLoading ? (
@@ -24,7 +33,7 @@ export function FeaturedProducts() {
             <Loader2 className="w-8 h-8 animate-spin text-[var(--primary)]" />
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
             {products?.map((product) => {
               const variant = product.variants?.[0];
               const price = variant?.prices?.[0]?.amount;
@@ -39,13 +48,14 @@ export function FeaturedProducts() {
                 />
               );
             })}
-            {/* If no products or less than 4, fill with placeholders */}
             {(!products || products.length < 4) &&
-              Array.from({ length: 4 - (products?.length || 0) }).map((_, i) => (
+              Array.from({
+                length: 4 - (products?.length || 0),
+              }).map((_, i) => (
                 <ProductCard
                   key={`placeholder-${i}`}
                   id={`placeholder-${i}`}
-                  handle={`#`}
+                  handle="#"
                   title="Novo produto em breve"
                   price={7990}
                   compareAtPrice={9990}
